@@ -15,16 +15,21 @@
                             <div class="p-5">
                                 <div class="text-center">
                                     <h1 class="h4 text-gray-900 mb-4">Welcome Back!</h1>
+                                    <div v-if="message" class="alert alert-warning rounded-pill">{{message}}</div>
                                 </div>
-                                <form class="user">
+                                <form @submit.prevent="login" class="user">
                                     <div class="form-group">
-                                        <input type="email" class="form-control form-control-user"
+                                        <input v-model="dataUser.email" type="email" :class="{'is-invalid' : errors.email}" class="form-control form-control-user"
                                             id="exampleInputEmail" aria-describedby="emailHelp"
-                                            placeholder="Enter Email Address...">
+                                            placeholder="Enter Email Address..." required>
+                                        <div class="invalid-feedback">{{errors.email}}</div>
+
                                     </div>
                                     <div class="form-group">
-                                        <input type="password" class="form-control form-control-user"
-                                            id="exampleInputPassword" placeholder="Password">
+                                        <input v-model="dataUser.password" type="password" :class="{'is-invalid' : errors.password}" class="form-control form-control-user"
+                                            id="exampleInputPassword" placeholder="Password" required>
+                                        <div class="invalid-feedback">{{errors.password}}</div>
+
                                     </div>
                                     <div class="form-group">
                                         <div class="custom-control custom-checkbox small">
@@ -33,9 +38,13 @@
                                                 Me</label>
                                         </div>
                                     </div>
-                                    <a href="index.html" class="btn btn-primary btn-user btn-block">
-                                        Login
-                                    </a>
+                                    <button type="submit" class="btn btn-primary btn-user btn-block">
+                                        <div v-if="loading" class="spinner-border spinner-border-sm text-light" role="status">
+                                            <span class="sr-only">Loading...</span>
+                                        </div>
+                                        <span v-else>Login</span>
+                                    </button>
+
                                     <hr>
                                     <a href="index.html" class="btn btn-google btn-user btn-block">
                                         <i class="fab fa-google fa-fw"></i> Login with Google
@@ -63,7 +72,62 @@
     </div>
   </div>
 </template>
+<script>
+    import { ref, reactive } from 'vue';
+    import { useAuthStore } from '@/store';
 
+    export default ({
+        setup() {
+            const dataUser = reactive({
+                email: '',
+                password: ''
+            })
+            const errors = reactive({
+                email: '',
+                password: ''
+            })
+            const message = ref('')
+            const loading = ref(false)
+            const authStore = useAuthStore()
+
+            const login = async () => {
+                console.log('login')
+                loading.value = true
+                console.log(dataUser.email)
+                await authStore.login(dataUser.email, dataUser.password)
+                .catch(err => {
+                    console.log(err)
+                    // console.log(errors)
+                    message.value = err.message
+                    if(err.errors) {
+                        errors.email = ''
+                        errors.password = ''
+                        err.errors.map(item => {
+                            let key = Object.keys(item)[0]
+                            let val = Object.values(item)[0]
+                            errors[key] = val
+                        })
+                    }else{
+                        errors.email = ''
+                        errors.password = ''
+                    }
+                    console.log(errors)
+                })
+
+                loading.value = false
+                
+            }
+
+            return {
+                login,
+                dataUser,
+                message,
+                errors,
+                loading
+            }
+        }
+    })
+</script>
 <style>
   .container {
     min-height: 100vh;

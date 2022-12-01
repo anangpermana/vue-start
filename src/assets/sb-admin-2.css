@@ -10546,7 +10546,7 @@
       font-size: 0.85rem;
       display: inline;
     }
-    /* .sidebar .nav-item .nav-link[data-toggle="collapse"]::after {
+    .sidebar .nav-item .nav-link[data-toggle="collapse"]::after {
       width: 1rem;
       text-align: center;
       float: right;
@@ -10558,7 +10558,7 @@
     }
     .sidebar .nav-item .nav-link[data-toggle="collapse"].collapsed::after {
       content: '\f105';
-    } */
+    }
     .sidebar .sidebar-brand .sidebar-brand-icon i {
       font-size: 2rem;
     }
@@ -10861,7 +10861,7 @@
   }
   
   .bg-login-image {
-    background: url("https://source.unsplash.com/K4mSJ7kc0As/600x800");
+    background: url("https://source.unsplash.com/1uc_fc0ozuw/600x800");
     background-position: center;
     background-size: cover;
   }
