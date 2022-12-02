@@ -4,111 +4,41 @@
         <ul :class="{'toggled':store.isSidebarShow}" class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="#" @click="$router.push('/')">
                 <div class="sidebar-brand-icon rotate-n-0">
                     <font-awesome-icon icon="fa-solid fa-user-astronaut" size="2x" />
                 </div>
                 <div class="sidebar-brand-text mx-3">SB Admin <sup>2</sup></div>
             </a>
 
-            <!-- Divider -->
-            <hr class="sidebar-divider my-0">
-
-            <!-- Nav Item - Dashboard -->
-            <li class="nav-item active">
-                <a class="nav-link" href="index.html">
-                    <i class="fas fa-fw fa-tachometer-alt"></i>
-                    <span>Dashboard</span></a>
-            </li>
-
-            <!-- Divider -->
-            <hr class="sidebar-divider">
-
-            <!-- Heading -->
-            <div class="sidebar-heading">
-                Interface
-            </div>
-
-            <!-- Nav Item - Pages Collapse Menu -->
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="javascript:void(0)" data-toggle="collapse" data-target="#collapseTwo"
-                    aria-expanded="true" aria-controls="collapseTwo">
-                    <i class="fas fa-fw fa-cog"></i>
-                    <span>Components</span>
-                </a>
-                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Custom Components:</h6>
-                        <a class="collapse-item" href="buttons.html">Buttons</a>
-                        <a class="collapse-item" href="cards.html">Cards</a>
-                    </div>
-                </div>
-            </li>
-
-            <!-- Nav Item - Utilities Collapse Menu -->
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
-                    aria-expanded="true" aria-controls="collapseUtilities">
-                    <i class="fas fa-fw fa-wrench"></i>
-                    <span>Utilities</span>
-                </a>
-                <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities"
-                    data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Custom Utilities:</h6>
-                        <a class="collapse-item" href="utilities-color.html">Colors</a>
-                        <a class="collapse-item" href="utilities-border.html">Borders</a>
-                        <a class="collapse-item" href="utilities-animation.html">Animations</a>
-                        <a class="collapse-item" href="utilities-other.html">Other</a>
-                    </div>
-                </div>
-            </li>
-
-            <!-- Divider -->
-            <hr class="sidebar-divider">
-
-            <!-- Heading -->
-            <div class="sidebar-heading">
-                Addons
-            </div>
-
-            <!-- Nav Item - Pages Collapse Menu -->
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
-                    aria-expanded="true" aria-controls="collapsePages">
-                    <font-awesome-icon icon="fa-solid fa-folder" />
-                    <span class="pl-1">Pages</span>
-                </a>
-                <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Login Screens:</h6>
-                        <a class="collapse-item" href="login.html">Login</a>
-                        <a class="collapse-item" href="register.html">Register</a>
-                        <a class="collapse-item" href="forgot-password.html">Forgot Password</a>
-                        <div class="collapse-divider"></div>
-                        <h6 class="collapse-header">Other Pages:</h6>
-                        <a class="collapse-item" href="404.html">404 Page</a>
-                        <a class="collapse-item" href="blank.html">Blank Page</a>
-                    </div>
-                </div>
-            </li>
-
-            <!-- Nav Item - Charts -->
-            <li class="nav-item">
-                <a class="nav-link" href="charts.html">
-                    <i class="fas fa-fw fa-chart-area"></i>
-                    <span>Charts</span></a>
-            </li>
-
-            <!-- Nav Item - Tables -->
-            <li class="nav-item">
-                <a class="nav-link" href="tables.html">
-                    <i class="fas fa-fw fa-table"></i>
-                    <span>Tables</span></a>
-            </li>
+            
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">
 
+            <li v-for="(navItem, index) in menuList" :key="index" class="nav-item" :class="{active: currentRoute.meta.group == navItem.name}">
+                
+                <div v-if="navItem.items.length > 0">
+                    <a class="nav-link" :class="{collapsed: !navItem.expand && currentRoute.meta.group != navItem.name}" href="javascript:;" data-toggle="collapse" role="button" :aria-expanded="navItem.expand" aria-controls="sidebar-products" @click.prevent="navItemCollapse(index)">
+                        <i :class="navItem.icon"></i>
+                        <span class="nav-link-text ml-1">{{navItem.name}}</span>
+                    </a>
+                </div>
+                <div v-else>
+                    <a class="nav-link" href="javascript:;" @click="$router.push(navItem.link)">
+                        <i :class="navItem.icon"></i>
+                    <span>{{navItem.name}}</span></a>
+                </div>
+                <div v-if="(navItem.items.length > 0 )" :class="[currentRoute.meta.group == navItem.name ? 'collapse show': navItem.expand ? 'collapse show' : 'collapse']">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <ul class="nav nav-sm flex-column">
+                            <li v-for="(subItem, index) in navItem.items" :key="index">
+                                <a href="javascript:;" @click="$router.push(subItem.link)" :class="[subItem.name == currentRoute.name ? 'collapse-item active':'collapse-item']">{{subItem.name}}</a>
+                            </li>
+                            
+                        </ul>
+                    </div>
+                </div>
+            </li>
             <!-- Sidebar Toggler (Sidebar) -->
             <div class="text-center d-none d-md-inline">
                 <button @click="toggleSidebar" class="rounded-circle border-0" id="sidebarToggle"></button>
@@ -127,11 +57,49 @@
 </template>
 
 <script>
-    import { storeToRefs } from 'pinia'
+    import { computed, reactive } from 'vue'
+    import { useRouter } from 'vue-router';
     import {useGlobalStore} from '@/store/global.store';
     export default {
         setup() {
             const store = useGlobalStore()
+            const router = useRouter()
+            let currentRoute = router.currentRoute.value
+            console.log(currentRoute)
+            let menuList = reactive([
+                {
+                    name: 'Dashboard',
+                    icon: 'fas fa-fw fa-tachometer-alt',
+                    expand: false,
+                    link: '/',
+                    items: []
+                },
+                {
+                    name: 'Settings',
+                    icon: 'fas fa-fw fa-cog',
+                    expand: false,
+                    items: [
+                        {
+                            name: 'Global',
+                            link: '/settings/global'
+                        },
+                        {
+                            name: 'Profile',
+                            link: '/setting/profile'
+                        }
+                    ]
+                }
+            ])
+            function navItemCollapse(index) {
+                console.log(index)
+                menuList = menuList.map((item, i) => {
+                    item.expand = !item.expand
+                    if(i !== index) {
+                        item.expand = false
+                    }
+                    return item
+                })
+            }
             function toggleSidebar() {
                 store.$patch((state) => {
                     state.isSidebarShow = !state.isSidebarShow
@@ -141,9 +109,13 @@
                 // console.log(store.isSidebarShow)
             }
 
+            
             return {
+                navItemCollapse,
                 toggleSidebar,
-                store
+                store,
+                menuList,
+                currentRoute
             }
         }
     }
