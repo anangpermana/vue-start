@@ -1,384 +1,236 @@
 <template>
-  <!-- Page Wrapper -->
-  <div id="wrapper">
+    <Layout>
+        <main class="flex-1">
+            <!-- Page title & actions -->
+            <div class="border-b border-gray-200 px-4 py-4 sm:flex sm:items-center sm:justify-between sm:px-6 lg:px-8">
+            <div class="flex-1 min-w-0">
+                <h1 class="text-lg font-medium leading-6 text-gray-900 sm:truncate">Home</h1>
+            </div>
+            <div class="mt-4 flex sm:mt-0 sm:ml-4">
+                <button type="button" class="order-1 ml-3 inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 sm:order-0 sm:ml-0">Share</button>
+                <button type="button" class="order-0 inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 sm:order-1 sm:ml-3">Create</button>
+            </div>
+            </div>
 
-    <!-- Sidebar -->
-        <Sidebar />
-    <!-- End of Sidebar -->
+            <!-- Pinned projects -->
+            <div class="px-4 mt-6 sm:px-6 lg:px-8">
+            <h2 class="text-gray-500 text-xs font-medium uppercase tracking-wide">Pinned Projects</h2>
+            <ul role="list" class="grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-2 xl:grid-cols-4 mt-3">
+                <li v-for="project in pinnedProjects" :key="project.id" class="relative col-span-1 flex shadow-sm rounded-md">
+                <div :class="[project.bgColorClass, 'flex-shrink-0 flex items-center justify-center w-16 text-white text-sm font-medium rounded-l-md']">
+                    {{ project.initials }}
+                </div>
+                <div class="flex-1 flex items-center justify-between border-t border-r border-b border-gray-200 bg-white rounded-r-md truncate">
+                    <div class="flex-1 px-4 py-2 text-sm truncate">
+                    <a href="#" class="text-gray-900 font-medium hover:text-gray-600">
+                        {{ project.title }}
+                    </a>
+                    <p class="text-gray-500">{{ project.totalMembers }} Members</p>
+                    </div>
+                    <Menu as="div" class="flex-shrink-0 pr-2">
+                    <MenuButton class="w-8 h-8 bg-white inline-flex items-center justify-center text-gray-400 rounded-full hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
+                        <span class="sr-only">Open options</span>
+                        <DotsVerticalIcon class="w-5 h-5" aria-hidden="true" />
+                    </MenuButton>
+                    <transition enter-active-class="transition ease-out duration-100" enter-from-class="transform opacity-0 scale-95" enter-to-class="transform opacity-100 scale-100" leave-active-class="transition ease-in duration-75" leave-from-class="transform opacity-100 scale-100" leave-to-class="transform opacity-0 scale-95">
+                        <MenuItems class="z-10 mx-3 origin-top-right absolute right-10 top-3 w-48 mt-1 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 divide-y divide-gray-200 focus:outline-none">
+                        <div class="py-1">
+                            <MenuItem v-slot="{ active }">
+                            <a href="#" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm']">View</a>
+                            </MenuItem>
+                        </div>
+                        <div class="py-1">
+                            <MenuItem v-slot="{ active }">
+                            <a href="#" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm']">Removed from pinned</a>
+                            </MenuItem>
+                            <MenuItem v-slot="{ active }">
+                            <a href="#" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm']">Share</a>
+                            </MenuItem>
+                        </div>
+                        </MenuItems>
+                    </transition>
+                    </Menu>
+                </div>
+                </li>
+            </ul>
+            </div>
 
-    <!-- Content Wrapper -->
-    <div id="content-wrapper" class="d-flex flex-column">
+            <!-- Projects list (only on smallest breakpoint) -->
+            <div class="mt-10 sm:hidden">
+            <div class="px-4 sm:px-6">
+                <h2 class="text-gray-500 text-xs font-medium uppercase tracking-wide">Projects</h2>
+            </div>
+            <ul role="list" class="mt-3 border-t border-gray-200 divide-y divide-gray-100">
+                <li v-for="project in projects" :key="project.id">
+                <a href="#" class="group flex items-center justify-between px-4 py-4 hover:bg-gray-50 sm:px-6">
+                    <span class="flex items-center truncate space-x-3">
+                    <span :class="[project.bgColorClass, 'w-2.5 h-2.5 flex-shrink-0 rounded-full']" aria-hidden="true" />
+                    <span class="font-medium truncate text-sm leading-6">
+                        {{ project.title }}
+                        {{ ' ' }}
+                        <span class="truncate font-normal text-gray-500">in {{ project.team }}</span>
+                    </span>
+                    </span>
+                    <ChevronRightIcon class="ml-4 h-5 w-5 text-gray-400 group-hover:text-gray-500" aria-hidden="true" />
+                </a>
+                </li>
+            </ul>
+            </div>
 
-      <!-- Main Content -->
-      <div id="content">
+            <!-- Projects table (small breakpoint and up) -->
+            <div class="hidden mt-8 sm:block">
+            <div class="align-middle inline-block min-w-full border-b border-gray-200">
+                <table class="min-w-full">
+                <thead>
+                    <tr class="border-t border-gray-200">
+                    <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <span class="lg:pl-2">Project</span>
+                    </th>
+                    <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Members</th>
+                    <th class="hidden md:table-cell px-6 py-3 border-b border-gray-200 bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Last updated</th>
+                    <th class="pr-6 py-3 border-b border-gray-200 bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider" />
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-100">
+                    <tr v-for="project in projects" :key="project.id">
+                    <td class="px-6 py-3 max-w-0 w-full whitespace-nowrap text-sm font-medium text-gray-900">
+                        <div class="flex items-center space-x-3 lg:pl-2">
+                        <div :class="[project.bgColorClass, 'flex-shrink-0 w-2.5 h-2.5 rounded-full']" aria-hidden="true" />
+                        <a href="#" class="truncate hover:text-gray-600">
+                            <span>
+                            {{ project.title }}
+                            {{ ' ' }}
+                            <span class="text-gray-500 font-normal">in {{ project.team }}</span>
+                            </span>
+                        </a>
+                        </div>
+                    </td>
+                    <td class="px-6 py-3 text-sm text-gray-500 font-medium">
+                        <div class="flex items-center space-x-2">
+                        <div class="flex flex-shrink-0 -space-x-1">
+                            <img v-for="member in project.members" :key="member.handle" class="max-w-none h-6 w-6 rounded-full ring-2 ring-white" :src="member.imageUrl" :alt="member.name" />
+                        </div>
+                        <span v-if="project.totalMembers > project.members.length" class="flex-shrink-0 text-xs leading-5 font-medium">+{{ project.totalMembers - project.members.length }}</span>
+                        </div>
+                    </td>
+                    <td class="hidden md:table-cell px-6 py-3 whitespace-nowrap text-sm text-gray-500 text-right">
+                        {{ project.lastUpdated }}
+                    </td>
+                    <td class="px-6 py-3 whitespace-nowrap text-right text-sm font-medium">
+                        <a href="#" class="text-indigo-600 hover:text-indigo-900">Edit</a>
+                    </td>
+                    </tr>
+                </tbody>
+                </table>
+            </div>
+            </div>
 
-          <!-- Topbar -->
-          <Topbar />
-          <!-- End of Topbar -->
-
-          <!-- Begin Page Content -->
-          <div class="container-fluid">
-
-              <!-- Page Heading -->
-              <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                  <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
-                  <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
-                          class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>
-              </div>
-
-              <!-- Content Row -->
-              <div class="row">
-
-                  <!-- Earnings (Monthly) Card Example -->
-                  <div class="col-xl-3 col-md-6 mb-4">
-                      <div class="card border-left-primary shadow h-100 py-2">
-                          <div class="card-body">
-                              <div class="row no-gutters align-items-center">
-                                  <div class="col mr-2">
-                                      <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                          Earnings (Monthly)</div>
-                                      <div class="h5 mb-0 font-weight-bold text-gray-800">$40,000</div>
-                                  </div>
-                                  <div class="col-auto">
-                                      <i class="fas fa-calendar fa-2x text-gray-300"></i>
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
-                  </div>
-
-                  <!-- Earnings (Monthly) Card Example -->
-                  <div class="col-xl-3 col-md-6 mb-4">
-                      <div class="card border-left-success shadow h-100 py-2">
-                          <div class="card-body">
-                              <div class="row no-gutters align-items-center">
-                                  <div class="col mr-2">
-                                      <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                          Earnings (Annual)</div>
-                                      <div class="h5 mb-0 font-weight-bold text-gray-800">$215,000</div>
-                                  </div>
-                                  <div class="col-auto">
-                                      <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
-                  </div>
-
-                  <!-- Earnings (Monthly) Card Example -->
-                  <div class="col-xl-3 col-md-6 mb-4">
-                      <div class="card border-left-info shadow h-100 py-2">
-                          <div class="card-body">
-                              <div class="row no-gutters align-items-center">
-                                  <div class="col mr-2">
-                                      <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Tasks
-                                      </div>
-                                      <div class="row no-gutters align-items-center">
-                                          <div class="col-auto">
-                                              <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">50%</div>
-                                          </div>
-                                          <div class="col">
-                                              <div class="progress progress-sm mr-2">
-                                                  <div class="progress-bar bg-info" role="progressbar"
-                                                      style="width: 50%" aria-valuenow="50" aria-valuemin="0"
-                                                      aria-valuemax="100"></div>
-                                              </div>
-                                          </div>
-                                      </div>
-                                  </div>
-                                  <div class="col-auto">
-                                      <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
-                  </div>
-
-                  <!-- Pending Requests Card Example -->
-                  <div class="col-xl-3 col-md-6 mb-4">
-                      <div class="card border-left-warning shadow h-100 py-2">
-                          <div class="card-body">
-                              <div class="row no-gutters align-items-center">
-                                  <div class="col mr-2">
-                                      <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                          Pending Requests</div>
-                                      <div class="h5 mb-0 font-weight-bold text-gray-800">18</div>
-                                  </div>
-                                  <div class="col-auto">
-                                      <i class="fas fa-comments fa-2x text-gray-300"></i>
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
-                  </div>
-              </div>
-
-              <!-- Content Row -->
-
-              <div class="row">
-
-                  <!-- Area Chart -->
-                  <div class="col-xl-8 col-lg-7">
-                      <div class="card shadow mb-4">
-                          <!-- Card Header - Dropdown -->
-                          <div
-                              class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                              <h6 class="m-0 font-weight-bold text-primary">Earnings Overview</h6>
-                              <div class="dropdown no-arrow">
-                                  <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
-                                      data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                      <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
-                                  </a>
-                                  <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
-                                      aria-labelledby="dropdownMenuLink">
-                                      <div class="dropdown-header">Dropdown Header:</div>
-                                      <a class="dropdown-item" href="#">Action</a>
-                                      <a class="dropdown-item" href="#">Another action</a>
-                                      <div class="dropdown-divider"></div>
-                                      <a class="dropdown-item" href="#">Something else here</a>
-                                  </div>
-                              </div>
-                          </div>
-                          <!-- Card Body -->
-                          <div class="card-body">
-                              <div class="chart-area">
-                                  <canvas id="myAreaChart"></canvas>
-                              </div>
-                          </div>
-                      </div>
-                  </div>
-
-                  <!-- Pie Chart -->
-                  <div class="col-xl-4 col-lg-5">
-                      <div class="card shadow mb-4">
-                          <!-- Card Header - Dropdown -->
-                          <div
-                              class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                              <h6 class="m-0 font-weight-bold text-primary">Revenue Sources</h6>
-                              <div class="dropdown no-arrow">
-                                  <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
-                                      data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                      <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
-                                  </a>
-                                  <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
-                                      aria-labelledby="dropdownMenuLink">
-                                      <div class="dropdown-header">Dropdown Header:</div>
-                                      <a class="dropdown-item" href="#">Action</a>
-                                      <a class="dropdown-item" href="#">Another action</a>
-                                      <div class="dropdown-divider"></div>
-                                      <a class="dropdown-item" href="#">Something else here</a>
-                                  </div>
-                              </div>
-                          </div>
-                          <!-- Card Body -->
-                          <div class="card-body">
-                              <div class="chart-pie pt-4 pb-2">
-                                  <canvas id="myPieChart"></canvas>
-                              </div>
-                              <div class="mt-4 text-center small">
-                                  <span class="mr-2">
-                                      <i class="fas fa-circle text-primary"></i> Direct
-                                  </span>
-                                  <span class="mr-2">
-                                      <i class="fas fa-circle text-success"></i> Social
-                                  </span>
-                                  <span class="mr-2">
-                                      <i class="fas fa-circle text-info"></i> Referral
-                                  </span>
-                              </div>
-                          </div>
-                      </div>
-                  </div>
-              </div>
-
-              <!-- Content Row -->
-              <div class="row">
-
-                  <!-- Content Column -->
-                  <div class="col-lg-6 mb-4">
-
-                      <!-- Project Card Example -->
-                      <div class="card shadow mb-4">
-                          <div class="card-header py-3">
-                              <h6 class="m-0 font-weight-bold text-primary">Projects</h6>
-                          </div>
-                          <div class="card-body">
-                              <h4 class="small font-weight-bold">Server Migration <span
-                                      class="float-right">20%</span></h4>
-                              <div class="progress mb-4">
-                                  <div class="progress-bar bg-danger" role="progressbar" style="width: 20%"
-                                      aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
-                              </div>
-                              <h4 class="small font-weight-bold">Sales Tracking <span
-                                      class="float-right">40%</span></h4>
-                              <div class="progress mb-4">
-                                  <div class="progress-bar bg-warning" role="progressbar" style="width: 40%"
-                                      aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
-                              </div>
-                              <h4 class="small font-weight-bold">Customer Database <span
-                                      class="float-right">60%</span></h4>
-                              <div class="progress mb-4">
-                                  <div class="progress-bar" role="progressbar" style="width: 60%"
-                                      aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
-                              </div>
-                              <h4 class="small font-weight-bold">Payout Details <span
-                                      class="float-right">80%</span></h4>
-                              <div class="progress mb-4">
-                                  <div class="progress-bar bg-info" role="progressbar" style="width: 80%"
-                                      aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
-                              </div>
-                              <h4 class="small font-weight-bold">Account Setup <span
-                                      class="float-right">Complete!</span></h4>
-                              <div class="progress">
-                                  <div class="progress-bar bg-success" role="progressbar" style="width: 100%"
-                                      aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
-                              </div>
-                          </div>
-                      </div>
-
-                      <!-- Color System -->
-                      <div class="row">
-                          <div class="col-lg-6 mb-4">
-                              <div class="card bg-primary text-white shadow">
-                                  <div class="card-body">
-                                      Primary
-                                      <div class="text-white-50 small">#4e73df</div>
-                                  </div>
-                              </div>
-                          </div>
-                          <div class="col-lg-6 mb-4">
-                              <div class="card bg-success text-white shadow">
-                                  <div class="card-body">
-                                      Success
-                                      <div class="text-white-50 small">#1cc88a</div>
-                                  </div>
-                              </div>
-                          </div>
-                          <div class="col-lg-6 mb-4">
-                              <div class="card bg-info text-white shadow">
-                                  <div class="card-body">
-                                      Info
-                                      <div class="text-white-50 small">#36b9cc</div>
-                                  </div>
-                              </div>
-                          </div>
-                          <div class="col-lg-6 mb-4">
-                              <div class="card bg-warning text-white shadow">
-                                  <div class="card-body">
-                                      Warning
-                                      <div class="text-white-50 small">#f6c23e</div>
-                                  </div>
-                              </div>
-                          </div>
-                          <div class="col-lg-6 mb-4">
-                              <div class="card bg-danger text-white shadow">
-                                  <div class="card-body">
-                                      Danger
-                                      <div class="text-white-50 small">#e74a3b</div>
-                                  </div>
-                              </div>
-                          </div>
-                          <div class="col-lg-6 mb-4">
-                              <div class="card bg-secondary text-white shadow">
-                                  <div class="card-body">
-                                      Secondary
-                                      <div class="text-white-50 small">#858796</div>
-                                  </div>
-                              </div>
-                          </div>
-                          <div class="col-lg-6 mb-4">
-                              <div class="card bg-light text-black shadow">
-                                  <div class="card-body">
-                                      Light
-                                      <div class="text-black-50 small">#f8f9fc</div>
-                                  </div>
-                              </div>
-                          </div>
-                          <div class="col-lg-6 mb-4">
-                              <div class="card bg-dark text-white shadow">
-                                  <div class="card-body">
-                                      Dark
-                                      <div class="text-white-50 small">#5a5c69</div>
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
-
-                  </div>
-
-                  <div class="col-lg-6 mb-4">
-
-                      <!-- Illustrations -->
-                      <div class="card shadow mb-4">
-                          <div class="card-header py-3">
-                              <h6 class="m-0 font-weight-bold text-primary">Illustrations</h6>
-                          </div>
-                          <div class="card-body">
-                              <div class="text-center">
-                                  <img class="img-fluid px-3 px-sm-4 mt-3 mb-4" style="width: 25rem;"
-                                      src="/img/undraw_posting_photo.svg" alt="...">
-                              </div>
-                              <p>Add some quality, svg illustrations to your project courtesy of <a
-                                      target="_blank" rel="nofollow" href="https://undraw.co/">unDraw</a>, a
-                                  constantly updated collection of beautiful svg images that you can use
-                                  completely free and without attribution!</p>
-                              <a target="_blank" rel="nofollow" href="https://undraw.co/">Browse Illustrations on
-                                  unDraw &rarr;</a>
-                          </div>
-                      </div>
-
-                      <!-- Approach -->
-                      <div class="card shadow mb-4">
-                          <div class="card-header py-3">
-                              <h6 class="m-0 font-weight-bold text-primary">Development Approach</h6>
-                          </div>
-                          <div class="card-body">
-                              <p>SB Admin 2 makes extensive use of Bootstrap 4 utility classes in order to reduce
-                                  CSS bloat and poor page performance. Custom CSS classes are used to create
-                                  custom components and custom utility classes.</p>
-                              <p class="mb-0">Before working with this theme, you should become familiar with the
-                                  Bootstrap framework, especially the utility classes.</p>
-                          </div>
-                      </div>
-
-                  </div>
-              </div>
-
-          </div>
-          <!-- /.container-fluid -->
-
-      </div>
-      <!-- End of Main Content -->
-
-      <!-- Footer -->
-      <footer class="sticky-footer bg-white">
-          <div class="container my-auto">
-              <div class="copyright text-center my-auto">
-                  <span>Copyright &copy; Your Website 2021</span>
-              </div>
-          </div>
-      </footer>
-      <!-- End of Footer -->
-
-    </div>
-    <!-- End of Content Wrapper -->
-
-  </div>
-  <!-- End of Page Wrapper -->
+        </main>
+    </Layout>
 </template>
 
 <script>
-import { ref, reactive } from "vue";
-import Sidebar from "../components/Sidebar.vue";
-import Topbar from "../components/Topbar.vue";
-
-export default ({
-    components: {
-        Sidebar,
-        Topbar
+import Layout from '../layouts/default.vue';
+import {
+    MenuButton,
+    MenuItem,
+    MenuItems,
+    Menu
+} from '@headlessui/vue'
+import { ChevronRightIcon, DotsVerticalIcon } from '@heroicons/vue/solid'
+const projects = [
+    {
+      id: 1,
+      title: 'GraphQL API',
+      initials: 'GA',
+      team: 'Engineering',
+      members: [
+        {
+          name: 'Dries Vincent',
+          handle: 'driesvincent',
+          imageUrl:
+            'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+        },
+        {
+          name: 'Lindsay Walton',
+          handle: 'lindsaywalton',
+          imageUrl:
+            'https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+        },
+        {
+          name: 'Courtney Henry',
+          handle: 'courtneyhenry',
+          imageUrl:
+            'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+        },
+        {
+          name: 'Tom Cook',
+          handle: 'tomcook',
+          imageUrl:
+            'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+        },
+      ],
+      totalMembers: 12,
+      lastUpdated: 'March 17, 2020',
+      pinned: true,
+      bgColorClass: 'bg-pink-600',
     },
+    {
+      id: 2,
+      title: 'New Benefits Plan',
+      initials: 'NB',
+      team: 'Human Resources',
+      members: [
+        {
+          name: 'Dries Vincent',
+          handle: 'driesvincent',
+          imageUrl:
+            'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+        },
+        {
+          name: 'Lindsay Walton',
+          handle: 'lindsaywalton',
+          imageUrl:
+            'https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+        },
+        {
+          name: 'Courtney Henry',
+          handle: 'courtneyhenry',
+          imageUrl:
+            'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+        },
+        {
+          name: 'Tom Cook',
+          handle: 'tomcook',
+          imageUrl:
+            'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+        },
+      ],
+      totalMembers: 10,
+      lastUpdated: 'March 17, 2020',
+      pinned: true,
+      bgColorClass: 'bg-green-600',
+    },
+    // More projects...
+  ]
+  const pinnedProjects = projects.filter((project) => project.pinned)
+  
+export default ({
+    components : {
+        Layout,
+        ChevronRightIcon, 
+        DotsVerticalIcon,
+        MenuButton,
+        MenuItem,
+        MenuItems,
+        Menu
+    },
+
     setup() {
-        
+        return {
+            projects,
+            pinnedProjects
+        }
     }
 })
 </script>
