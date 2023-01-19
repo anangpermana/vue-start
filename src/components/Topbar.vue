@@ -213,7 +213,8 @@ import { ref } from '@vue/reactivity';
             const store = useGlobalStore()
             const authStore = useAuthStore()
             const showUser = ref(false)
-
+            const { user } = useAuthStore();
+            console.log(user.status)
             function toggleSidebar() {
                 store.$patch((state) => {
                     state.isSidebarShow = !state.isSidebarShow

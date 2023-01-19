@@ -6,7 +6,8 @@
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="#" @click="$router.push('/')">
                 <div class="sidebar-brand-icon rotate-n-0">
-                    <font-awesome-icon icon="fa-solid fa-user-astronaut" size="2x" />
+                    <i class="fas fa-fw fa-user-astronaut"></i>
+                    
                 </div>
                 <div class="sidebar-brand-text mx-3">SB Admin <sup>2</sup></div>
             </a>
@@ -65,7 +66,7 @@
             const store = useGlobalStore()
             const router = useRouter()
             let currentRoute = router.currentRoute.value
-            console.log(currentRoute)
+            
             let menuList = reactive([
                 {
                     name: 'Dashboard',
