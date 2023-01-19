@@ -171,7 +171,7 @@
                 <li @click="toggleUser" class="nav-item dropdown no-arrow" :class="{'show':showUser}">
                     <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                         data-toggle="dropdown" aria-haspopup="true" :aria-expanded="showUser">
-                        <span class="mr-2 d-none d-lg-inline text-gray-600 small">Douglas McGee</span>
+                        <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{user.name}}</span>
                         <img class="img-profile rounded-circle"
                             src="/img/undraw_profile.svg">
                     </a>
@@ -214,7 +214,7 @@ import { ref } from '@vue/reactivity';
             const authStore = useAuthStore()
             const showUser = ref(false)
             const { user } = useAuthStore();
-            console.log(user.status)
+            console.log(user)
             function toggleSidebar() {
                 store.$patch((state) => {
                     state.isSidebarShow = !state.isSidebarShow
@@ -238,7 +238,8 @@ import { ref } from '@vue/reactivity';
                 toggleSidebar,
                 logout,
                 showUser,
-                store
+                store,
+                user
             }
         }
     }

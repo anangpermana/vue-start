@@ -14,9 +14,19 @@ export const useAuthStore = defineStore({
             try {
                 const user = await fetcWrapper.post(`${baseUrl}/auth/login`, {email, password})
                 console.log(user)
-                this.user = user
-                localStorage.setItem('user', JSON.stringify(user))
+                this.user = user.data
+                localStorage.setItem('user', JSON.stringify(user.data))
                 router.push('/')
+            } catch (error) {
+                throw error
+            }
+        },
+        async register(dataUser) {
+            try {
+                const register = await fetcWrapper.post(`${baseUrl}/auth/register`, dataUser)
+                if(register.status) {
+                    router.push('/confirm')
+                }
             } catch (error) {
                 throw error
             }
