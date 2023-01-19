@@ -168,15 +168,15 @@
                 <div class="topbar-divider d-none d-sm-block"></div>
 
                 <!-- Nav Item - User Information -->
-                <li class="nav-item dropdown no-arrow">
+                <li @click="toggleUser" class="nav-item dropdown no-arrow" :class="{'show':showUser}">
                     <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
-                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        data-toggle="dropdown" aria-haspopup="true" :aria-expanded="showUser">
                         <span class="mr-2 d-none d-lg-inline text-gray-600 small">Douglas McGee</span>
                         <img class="img-profile rounded-circle"
                             src="/img/undraw_profile.svg">
                     </a>
                     <!-- Dropdown - User Information -->
-                    <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                    <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" :class="{'show':showUser}"
                         aria-labelledby="userDropdown">
                         <a class="dropdown-item" href="#">
                             <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
@@ -206,11 +206,13 @@
 <script>
     import {useGlobalStore} from '@/store/global.store';
     import { useAuthStore } from '@/store'
+import { ref } from '@vue/reactivity';
     
     export default {
         setup() {
             const store = useGlobalStore()
             const authStore = useAuthStore()
+            const showUser = ref(false)
 
             function toggleSidebar() {
                 store.$patch((state) => {
@@ -220,12 +222,21 @@
 
                 // console.log(store.isSidebarShow)
             }
+            function toggleUser() {
+                showUser.value = !showUser.value
+                console.log(showUser.value)
+            }
             async function logout(){
                 authStore.logout()
             }
+
+
+            
             return {
+                toggleUser,
                 toggleSidebar,
                 logout,
+                showUser,
                 store
             }
         }
