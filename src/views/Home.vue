@@ -130,7 +130,7 @@
 </template>
 
 <script>
-import Layout from '../layouts/default.vue';
+import Layout from '../layouts/layout.vue';
 import {
     MenuButton,
     MenuItem,

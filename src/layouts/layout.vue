@@ -62,8 +62,8 @@
                     <span class="flex min-w-0 items-center justify-between space-x-3">
                         <img class="w-10 h-10 bg-gray-300 rounded-full flex-shrink-0" src="https://images.unsplash.com/photo-1502685104226-ee32379fefbe?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=3&w=256&h=256&q=80" alt="" />
                         <span class="flex-1 flex flex-col min-w-0">
-                        <span class="text-gray-900 text-sm font-medium truncate">Jessy Schwarz</span>
-                        <span class="text-gray-500 text-sm truncate">@jessyschwarz</span>
+                        <span class="text-gray-900 text-sm font-medium truncate">{{users.name}} </span>
+                        <span class="text-gray-500 text-sm truncate">{{ users.email }}</span>
                         </span>
                     </span>
                     <SelectorIcon class="flex-shrink-0 h-5 w-5 text-gray-400 group-hover:text-gray-500" aria-hidden="true" />
@@ -213,13 +213,14 @@
     TransitionChild,
     TransitionRoot,
   } from '@headlessui/vue'
-  import { ClockIcon, HomeIcon, MenuAlt1Icon, ViewListIcon, XIcon } from '@heroicons/vue/outline'
+  import { ClockIcon, HomeIcon, MenuAlt1Icon, ViewListIcon, XIcon, FolderOpenIcon, CogIcon, CalendarIcon } from '@heroicons/vue/outline'
   import { ChevronRightIcon, DotsVerticalIcon, SearchIcon, SelectorIcon } from '@heroicons/vue/solid'
   
   const navigation = [
     { name: 'Home', href: '#', icon: HomeIcon, current: true },
-    { name: 'My tasks', href: '#', icon: ViewListIcon, current: false },
-    { name: 'Recent', href: '#', icon: ClockIcon, current: false },
+    { name: 'MCP', href: '#', icon: CalendarIcon, current: false },
+    { name: 'Master', href: '#', icon: FolderOpenIcon, current: false },
+    { name: 'Setting', href: '#', icon: CogIcon, current: false },
   ]
   const teams = [
     { name: 'Engineering', href: '#', bgColorClass: 'bg-indigo-500' },
@@ -227,7 +228,8 @@
     { name: 'Customer Success', href: '#', bgColorClass: 'bg-yellow-500' },
   ]
   
-  import { useAuthStore } from '@/store'
+  import { storeToRefs } from "pinia";
+  import { useAuthStore, useUsersStore } from '@/store'
   export default ({
       components: {
           Dialog,
@@ -247,18 +249,23 @@
       },
       setup() {
         const authStore = useAuthStore()
+        const userStore = useUsersStore()
+        userStore.getMe()
+        const {users} = storeToRefs(userStore)
 
         const sidebarOpen = ref(false)
-          
+
+        console.log(users.value)
         async function logout() {
             console.log('logout')
-            authStore.logout()
+            await authStore.logout()
         }
         return {
             navigation,
             teams,
             sidebarOpen,
-            logout
+            logout,
+            users
         }    
       }
   })
